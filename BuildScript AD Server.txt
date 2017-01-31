@@ -1,0 +1,48 @@
+1. 	Handig om te weten:
+	-	Naam							(%Computernaam)
+	-	Naam van de Netwerkkaart		(%NICNaam)
+	-	IP Adres						(%IPAdres)
+	-	Subnetmasker					(%Subnetmasker)
+	-	Gateway							(%Gateway)
+	-	Domeinnaam						(%Domeinnaam)
+	-	DNSSserver (ip van DC)			(%DNSSserver)
+	-	DNS Forwarder					(%DNSForwarder)
+	-	Administrator					(%Admin)
+	-	Wachtwoord van de Administrator	(%AdminPWD)
+
+Om een Domain controller te maken
+=================================================================
+powershell (rename-computer -newname "%Computernaam" -restart)
+netsh interface ipv4 set address "%NICNaam" static %IPAdres %Subnetmasker %Gateway
+powershell (install-windowsfeature -name ad-domain-services -includeallsubfeature)
+powershell (install-addsforest -domainname %Domeinnaam -installdns -nodnsonnetwork) 
+powershell (add-dnsserverforwarder -ipaddress %DNSForwarder)
+Netsh advfirewall firewall set rule group=”Windows Firewall Remote Management” new enable=yes
+Netsh advfirewall firewall set rule group=”Windows Remote Management” new enable=yes
+=================================================================
+
+Om een memberserver te maken
+=================================================================
+powershell (rename-computer -newname "%Computernaam" -restart)
+netsh interface ipv4 set address "%NICNaam" static %IPAdres %Subnetmasker %Gateway
+netsh interface ipv4 set dns "NICNaam" static %DNSSserver
+netdom join . /d:%Domeinnaam /ud:%Admin /pd:%AdminPWD
+powershell (restart-computer)
+Netsh advfirewall firewall set rule group=”Windows Firewall Remote Management” new enable=yes
+Netsh advfirewall firewall set rule group=”Windows Remote Management” new enable=yes
+
+
+Om een standaard image te maken
+vboxwindowsadditions-amd64 /S
+Powershell restart-computer
+sconfig
+6
+a
+a
+powershell restart-computer
+
+
+c:\windows\system32\sysprep\sysprep /oobe /generalize /shutdown
+
+
+
