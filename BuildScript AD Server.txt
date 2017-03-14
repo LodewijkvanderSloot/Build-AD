@@ -10,7 +10,7 @@
 	-	Administrator					(%Admin)
 	-	Wachtwoord van de Administrator	(%AdminPWD)
 
-Om een Domain controller te maken
+Om een Domain controller te maken!
 =================================================================
 powershell (rename-computer -newname "%Computernaam" -restart)
 netsh interface ipv4 set address "%NICNaam" static %IPAdres %Subnetmasker %Gateway
